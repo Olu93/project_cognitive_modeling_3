@@ -115,6 +115,93 @@ g1 <- g1 + xlab("height") + ylab("P") + theme_gray(20)
 g1
 
 
+# QUESTION 2 - IQ
+
+# we will work with points 1 to 150 (IQ-points)
+scale.points <- c(1:150) # TODO: Change so names make sense for IQ
+
+# we create a dataframe for plotting
+example.height <- data.frame(x=scale.points) 
+
+# we use sapply, which is a vectorized function application; see help if you don't understand it
+
+# we add y, which is just the probability density function described above (normal distribution)
+example.height$y <- sapply(example.height$x, function(x) {dnorm(x, mean=100, sd=15)}) 
+
+densityf=function(x) {dnorm(x, 100, 15)}
+cumulativef=function(x) {pnorm(x, 100, 15)} 
+probability.threshold_constructor <- function(threshold, scale.points, lambda, coverage.parameter, densityf, cumulativef) {
+    local({
+        denom = sum(sapply(scale.points, function(t) {exp(lambda*utility(t, scale.points, coverage.parameter, densityf, cumulativef))}))
+        print(denom)
+        function(threshold, scale.points, lambda, coverage.parameter, densityf, cumulativef){
+            exp(lambda*utility(threshold, scale.points, coverage.parameter, densityf, cumulativef))/denom
+        }
+    })
+}
+probability.threshold_fast <- probability.threshold_constructor(threshold, scale.points, 50, 0, densityf, cumulativef)
+use.adjective <- function(degree, scale.points, lambda, coverage.parameter, densityf, cumulativef) {
+    sum(sapply(scale.points[scale.points<=degree], function(threshold) {probability.threshold_fast(threshold, scale.points, lambda, coverage.parameter, densityf, cumulativef)}))
+}
+
+example.height$threshold_probs = sapply(scale.points, function(threshold) {probability.threshold_fast(threshold, scale.points, 50, 0, densityf, cumulativef)})
+example.height$sigma_probs = sapply(scale.points, function(degree) {use.adjective(degree, scale.points, 50, 0, densityf, cumulativef)})
+
+# this starts the plot creation
+g1 <- ggplot(example.height, aes(x=x, y=y)) 
+g1 <- g1 + geom_area(fill="green", alpha=.4) 
+
+# we add the result of updated belief
+g1 <- g1 + geom_area(aes(y=threshold_probs),fill="steelblue", alpha=.4) 
+# g1 <- g1 + geom_area(aes(y=sigma_probs),fill="red", alpha=.4)
+g1 <- g1 + xlab("height") + ylab("P") + theme_gray(20) 
+
+
+g1
+
+
+# QUESTION 2 - Waiting times
+scale.points <- c(1:30) # TODO: Change so names make sense for IQ
+
+# we create a dataframe for plotting
+example.height <- data.frame(x=scale.points) 
+
+# we use sapply, which is a vectorized function application; see help if you don't understand it
+
+# we add y, which is just the probability density function described above (normal distribution)
+example.height$y <- sapply(example.height$x, function(x) {dnorm(x, mean=100, sd=15)}) 
+
+densityf=function(x) {dgamma(x, 2, 2)}
+cumulativef=function(x) {pgamma(x, 2, 2)} 
+probability.threshold_constructor <- function(threshold, scale.points, lambda, coverage.parameter, densityf, cumulativef) {
+    local({
+        denom = sum(sapply(scale.points, function(t) {exp(lambda*utility(t, scale.points, coverage.parameter, densityf, cumulativef))}))
+        print(denom)
+        function(threshold, scale.points, lambda, coverage.parameter, densityf, cumulativef){
+            exp(lambda*utility(threshold, scale.points, coverage.parameter, densityf, cumulativef))/denom
+        }
+    })
+}
+probability.threshold_fast <- probability.threshold_constructor(threshold, scale.points, 50, 0, densityf, cumulativef)
+use.adjective <- function(degree, scale.points, lambda, coverage.parameter, densityf, cumulativef) {
+    sum(sapply(scale.points[scale.points<=degree], function(threshold) {probability.threshold_fast(threshold, scale.points, lambda, coverage.parameter, densityf, cumulativef)}))
+}
+
+example.height$threshold_probs = sapply(scale.points, function(threshold) {probability.threshold_fast(threshold, scale.points, 50, 0, densityf, cumulativef)})
+example.height$sigma_probs = sapply(scale.points, function(degree) {use.adjective(degree, scale.points, 50, 0, densityf, cumulativef)})
+
+# this starts the plot creation
+g1 <- ggplot(example.height, aes(x=x, y=y)) 
+g1 <- g1 + geom_area(fill="green", alpha=.4) 
+
+# we add the result of updated belief
+g1 <- g1 + geom_area(aes(y=threshold_probs),fill="steelblue", alpha=.4) 
+# g1 <- g1 + geom_area(aes(y=sigma_probs),fill="red", alpha=.4)
+g1 <- g1 + xlab("height") + ylab("P") + theme_gray(20) 
+
+
+g1
+
 
 # Task 2:
 # Explore expected.success and use.adjective for various prior distribution functions.
