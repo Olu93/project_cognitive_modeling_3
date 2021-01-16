@@ -25,6 +25,17 @@ opts_chunk$set(fig.path='figures/figure')
 opts_chunk$set(tidy=TRUE)
 @
 
+
+<<>>=
+save_plot <- function(plot,filename, width = 1000, height = 400){
+  png(filename, width = width, height = height)
+  print(plot)
+  dev.off()
+  return(plot)
+}
+@
+
+
 % The package for linguistics examples
 
 \title{Lab assignment 3: Probabilistic models}
@@ -101,7 +112,6 @@ g1 <- g1 + geom_area(fill="green", alpha=.4)  + xlab("height") + ylab("P") + the
 <<echo=FALSE, fig.pos="H", fig.width=8, fig.height=5>>=
 
 g1
-
 @
 
 What happens when a listener hears `$x$ is tall'? She should update the prior belief by assuming that $x$'s height is above the threshold, i.e., she now knows that $d_{A}(x)>\Theta$, where $A$ is in this case the adjective `tall' and $d_{A}(x)$ is the height of $x$. The new belief of the listener, written as $\rho_0(d_{A}(x)|A;\Theta)$ is the conditional probability $P(d_{A}(x)|d_{A}(x)>\Theta)$, which updates the prior distribution as follows:
@@ -202,23 +212,20 @@ Three other functions need to be implemented in the model of adjective productio
 First, implement the three functions. You should make use of the following code as your starting point, fill in the body of the functions. 
 
 <<echo=TRUE>>=
-
+# Question 1
 utility <- function(threshold, scale.points, coverage.parameter, densityf, cumulativef) {
-    ...
+    expected.success(threshold, scale.points, densityf, cumulativef) + coverage.parameter * (1-cumulativef(threshold))
 }
 
-
 probability.threshold <- function(threshold, scale.points, lambda, coverage.parameter, densityf, cumulativef) {
-
-    ...
-
+    (exp(lambda*utility(threshold, scale.points, coverage.parameter, densityf, cumulativef))/
+         sum(sapply(scale.points, function(t) {exp(lambda*utility(t, scale.points, coverage.parameter, densityf, cumulativef))})))
+    
 }
 
 
 use.adjective <- function(degree, scale.points, lambda, coverage.parameter, densityf, cumulativef) {
-
-    ...
-
+    sum(sapply(scale.points[scale.points<=degree], function(threshold) {probability.threshold(threshold, scale.points, lambda, coverage.parameter, densityf, cumulativef)}))
 }
 
 @
@@ -232,6 +239,7 @@ Given the distribution of height as described above (normal distribution, mean=1
 \textbf{Further help:} Here are a few tests that your implementation of the three functions should pass. If you do not pass these tests (they should give you TRUE), \emph{do not continue}! Something is wrong with your code and you need to fix that before going on. Right now, we get Errors because the functions are not implemented.
 
 <<echo=TRUE>>=
+# TESTS
 #probability.threshold is a probability, so if you sum up all values it generates, the result should be 1
 round(sum(sapply(1:10, function(x) {probability.threshold(x, 1:10, 50, 0, function(x) {dnorm(x, 5, 1)}, function(x) {pnorm(x, 5, 1)})}))) == 1
 
@@ -244,6 +252,56 @@ round(sapply(1:10, function(x) {use.adjective(x, 1:10, 50, 0, function(x) {dnorm
 
 @
 
+<<>>=
+densityf=function(x) {dnorm(x, 180, 10)}
+cumulativef=function(x) {pnorm(x, 180, 10)} 
+probability.threshold_constructor <- function(threshold, scale.points, lambda, coverage.parameter, densityf, cumulativef) {
+    local({
+        denom = sum(sapply(scale.points, function(t) {exp(lambda*utility(t, scale.points, coverage.parameter, densityf, cumulativef))}))
+        print(denom)
+        function(threshold, scale.points, lambda, coverage.parameter, densityf, cumulativef){
+            exp(lambda*utility(threshold, scale.points, coverage.parameter, densityf, cumulativef))/denom
+        }
+    })
+}
+
+probability.threshold_fast <- probability.threshold_constructor(threshold, scale.points, 50, 0, densityf, cumulativef)
+
+use.adjective <- function(degree, scale.points, lambda, coverage.parameter, densityf, cumulativef) {
+    sum(sapply(scale.points[scale.points<=degree], function(threshold) {probability.threshold_fast(threshold, scale.points, lambda, coverage.parameter, densityf, cumulativef)}))
+}
+
+example.height$threshold_probs = sapply(scale.points, function(threshold) {probability.threshold_fast(threshold, scale.points, 50, 0, densityf, cumulativef)})
+
+example.height$sigma_probs = sapply(scale.points, function(degree) {use.adjective(degree, scale.points, 50, 0, densityf, cumulativef)})
+@
+
+<<>>=
+max_degree_threshold <- max(example.height$threshold_probs)
+max_degree_sigma <- max(example.height$sigma_probs)
+
+@
+
+
+<<>>=
+g1 <- ggplot(example.height, aes(x=x, y=y)) 
+g1 <- g1 + geom_area(aes(y=threshold_probs),fill="red", alpha=.4) 
+g1 <- g1 + xlab("Threshold (cm)") + ylab("P") + theme_gray(20) 
+g1
+
+save_plot(g1 ,"figs/Question_1_threshold.png", width=666)
+@
+
+<<>>=
+g2 <- ggplot(example.height, aes(x=x, y=y)) 
+g2 <- g2 + geom_area(aes(y=sigma_probs),fill="red", alpha=.4) 
+g2 <- g2 + xlab("Threshold") + ylab("Adjective degree") + theme_gray(20) 
+g2
+
+save_plot(g2 ,"figs/Question_2_sigma.png", width=666)
+@
+
+
 \textbf{Question 2 (group, 2 pts)} Start working individually. Compare interim outcomes in your group. When you agree on the final answer, write that in your online document. Once you completed the question, write it down and discuss your answer with your teacher. Of course, you can reach out to your teacher if anything is unclear.
 
 Explore expected.success and use.adjective for various prior distribution functions. For this task, assume that coverage.parameter $c$ is at 0 and lambda is at 50.
@@ -254,6 +312,106 @@ Above, we looked at heights, which are distributed normally. Let's consider two 
     \item IQ is claimed to be normally distributed, with mean 100 and roughly 95\% of cases falling between 70-130 range. (Check normal distribution on wikipedia if you don't know it.) Specify the normal distribution and generate figures for expected.success and use.adjective using this distribution and report which degree has the highes expected.success. We assume that the relevant adjective in this case is `smart' and we are interested in when it would make sense to express `x is smart'. You should also adapt scale.points (there is no reason these points should go above 150).
     \item Waiting times have a gamma distribution. Specifics depend on situations and context, but it might be reasonable to say that waiting for buses is a gamma distribution with mean 2 and variance 2 (in minutes). (Check gamma distribution on wikipedia if you don't know it.) Specify the gamma distribution and generate figures for expected.success and use.adjective for this case (we assume that the relevant adjective is `late', i.e., when would it make sense to say `the bus is late'?) and report which degree has the highes expected.success. Again, you should adapt scale.points (it is enough if the scale goes up to 30).
 \end{itemize}
+
+<<>>=
+# Question 2 - IQ
+
+# we will work with points 1 to 150 (IQ-points)
+iq.points <- c(1:150) 
+
+# we create a dataframe for plotting
+example.iq <- data.frame(x=iq.points) 
+
+# we use sapply, which is a vectorized function application; see help if you don't understand it
+
+# we add y, which is just the probability density function described above (normal distribution)
+example.iq$y <- sapply(example.iq$x, function(x) {dnorm(x, mean=100, sd=15)}) 
+
+densityf=function(x) {dnorm(x, 100, 15)}
+cumulativef=function(x) {pnorm(x, 100, 15)}
+
+example.iq$es = sapply(iq.points, function(threshold) {expected.success(threshold, iq.points, densityf, cumulativef )})
+
+probability.threshold_constructor <- function(threshold, iq.points, lambda, coverage.parameter, densityf, cumulativef) {
+    local({
+        denom = sum(sapply(iq.points, function(t) {exp(lambda*utility(t, iq.points, coverage.parameter, densityf, cumulativef))}))
+        print(denom)
+        function(threshold, iq.points, lambda, coverage.parameter, densityf, cumulativef){
+            exp(lambda*utility(threshold, iq.points, coverage.parameter, densityf, cumulativef))/denom
+        }
+    })
+}
+
+probability.threshold_fast <- probability.threshold_constructor(threshold, iq.points, 50, 0, densityf, cumulativef)
+
+use.adjective <- function(degree, iq.points, lambda, coverage.parameter, densityf, cumulativef) {
+    sum(sapply(iq.points[iq.points<=degree], function(threshold) {probability.threshold_fast(threshold, iq.points, lambda, coverage.parameter, densityf, cumulativef)}))
+}
+
+example.iq$threshold_probs = sapply(iq.points, function(threshold) {probability.threshold_fast(threshold, iq.points, 50, 0, densityf, cumulativef)})
+
+example.iq$sigma_probs = sapply(iq.points, function(degree) {use.adjective(degree, iq.points, 50, 0, densityf, cumulativef)})
+
+# this starts the plot creation
+g1 <- ggplot(example.iq, aes(x=x, y=y)) 
+g1 <- g1 + geom_area(fill="green", alpha=.4) 
+
+# we add the result of updated belief
+g1 <- g1 + geom_area(aes(y=es),fill="steelblue", alpha=.4) 
+#g1 <- g1 + geom_area(aes(y=sigma_probs),fill="red", alpha=.4)
+g1 <- g1 + xlab("IQ") + ylab("P") + theme_gray(20) 
+
+
+g1
+
+save_plot(g1 ,"figs/Question_2_IQ.png", width=666)
+@
+
+
+<<>>=
+# Question 2 - Waiting times
+scale.points <- c(1:30) # TODO: Change so names make sense for IQ
+
+# we create a dataframe for plotting
+example.height <- data.frame(x=scale.points) 
+
+# we use sapply, which is a vectorized function application; see help if you don't understand it
+
+# we add y, which is just the probability density function described above (normal distribution)
+example.height$y <- sapply(example.height$x, function(x) {dnorm(x, mean=100, sd=15)}) 
+
+densityf=function(x) {dgamma(x, 2, 2)}
+cumulativef=function(x) {pgamma(x, 2, 2)} 
+probability.threshold_constructor <- function(threshold, scale.points, lambda, coverage.parameter, densityf, cumulativef) {
+    local({
+        denom = sum(sapply(scale.points, function(t) {exp(lambda*utility(t, scale.points, coverage.parameter, densityf, cumulativef))}))
+        print(denom)
+        function(threshold, scale.points, lambda, coverage.parameter, densityf, cumulativef){
+            exp(lambda*utility(threshold, scale.points, coverage.parameter, densityf, cumulativef))/denom
+        }
+    })
+}
+probability.threshold_fast <- probability.threshold_constructor(threshold, scale.points, 50, 0, densityf, cumulativef)
+use.adjective <- function(degree, scale.points, lambda, coverage.parameter, densityf, cumulativef) {
+    sum(sapply(scale.points[scale.points<=degree], function(threshold) {probability.threshold_fast(threshold, scale.points, lambda, coverage.parameter, densityf, cumulativef)}))
+}
+
+example.height$threshold_probs = sapply(scale.points, function(threshold) {probability.threshold_fast(threshold, scale.points, 50, 0, densityf, cumulativef)})
+example.height$sigma_probs = sapply(scale.points, function(degree) {use.adjective(degree, scale.points, 50, 0, densityf, cumulativef)})
+
+# this starts the plot creation
+g1 <- ggplot(example.height, aes(x=x, y=y)) 
+g1 <- g1 + geom_area(fill="green", alpha=.4) 
+
+# we add the result of updated belief
+g1 <- g1 + geom_area(aes(y=threshold_probs),fill="steelblue", alpha=.4) 
+# g1 <- g1 + geom_area(aes(y=sigma_probs),fill="red", alpha=.4)
+g1 <- g1 + xlab("height") + ylab("P") + theme_gray(20) 
+
+
+g1
+@
+
 
 \section{Data}
 
