@@ -53,25 +53,25 @@ Evangelia Giannikou - 6988229\\
 \subsection{Height - normal distribution, mean = 180, st.d. = 10}
 \textit{Show two graphs: (i) what the probability of using threshold looks like on the scale 1-250 cm; (ii) the graph of the function $\sigma$ on the same scale. State which degree point has the highest probability of being used as a threshold, and on which degree point it is most likely the speaker will use the adjective tall. If the two values differ or are the same, say in a few words why you think this is so.}\\
 
-In Figure \ref{fig:q1_threshold}, the probability of using threshold on the scale 1-250 cm is shown. The highest degree point is when threshold $ \theta = 0.083$, and height = 184 cm.
+In Figure \ref{fig:q1_threshold}, the probability with the use of a threshold on the scale 1-250 cm is shown. The highest degree point is when threshold $ \theta = 0.083$, and height = 184 cm.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figs/Question_1_threshold.png}
+    \includegraphics[width=100mm]{figs/Question_1_threshold.png}
     \caption{The graph shows the probability of using a threshold on a scale of 1-250 cm.}
   \label{fig:q1_threshold}
 \end{figure}
 
-Similarly, in Figure \ref{fig:q1_sigma}, it is shown the graph of the function $\sigma$ on the same scale. The function expresses the likelihood that the speaker will use the adjective 'tall' to tell how tall is something. In the graph, the highest degree point is 1 and height = 255 cm, which means that it is definite that the speaker will use the adjective tall when threshold $ \theta = 1$ and height = 255 cm. As the value decreases, the likelihood is diminishing as well. By using the probability of threshold $\theta = 0.083$ in Figure \ref{fig:q1_threshold}, the speaker is most likely to use the adjective 'tall' for heights greater than 184 cm.
+Similarly, in Figure \ref{fig:q1_sigma}, it is shown the graph of the function $\sigma$ on the same scale. The function expresses the likelihood that the speaker will use the adjective 'tall' given a certain degree. In the graph, the highest degree point is 1 and height = 255 cm, which is the optimal. In other words, at this point it is definite that the speaker will use the adjective tall when threshold $ \theta = 1$ and height = 255 cm. As the value decreases, the likelihood is diminishing as well.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figs/Question_1_sigma.png}
+    \includegraphics[width=100mm]{figs/Question_1_sigma.png}
     \caption{The graph shows the function $\sigma$ on a scale 1-250 cm.}
   \label{fig:q1_sigma}
 \end{figure}
 
-
+Comparing the two degree points to evaluate the communication efficiency, it is evident that the two values deviate. Considering that $\theta = 1$ is optimal, the speaker is most likely to use the adjective 'tall' for heights greater than 184 cm when $\theta = 0.083$. 
 
 \section{Question 2}
 \label{Q2}
@@ -80,8 +80,8 @@ Similarly, in Figure \ref{fig:q1_sigma}, it is shown the graph of the function $
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figs/Question_2_IQ_es.png}
-    \caption{The graph shows the expected success function for IQ on a scale of 1-150.}
+    \includegraphics[width=100mm]{figs/Question_2_IQ_es.png}
+    \caption{The graph shows the Expected Success function for IQ on a scale of 1-150.}
   \label{fig:q2_iq_es}
 \end{figure}
 
@@ -91,14 +91,63 @@ Similarly, in Figure \ref{fig:q1_sigma}, it is shown the graph of the function $
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figs/Question_2_IQ_sigma.png}
+    \includegraphics[width=100mm]{figs/Question_2_IQ_sigma.png}
     \caption{The graph shows the $\sigma$ function for IQ on a scale of 1-150.}
   \label{fig:q2_iq_sigma}
 \end{figure}
 
 \section{Question 3}
 \label{Q3}
-\textit{}\\
+\textit{What is Pearson’s correlation coefficient, r, between model’s predictions and actual observations. Check the value of $r$ with respect to three different parameters of the model (9 comparisons in total):}
+
+\begin{itemize}
+    \item \textit{lambda=40, coverage.parameter=0.1}
+    \item \textit{lambda=40, coverage.parameter=-0.1}
+    \item \textit{lambda=40, coverage.parameter=0}
+\end{itemize}
+
+\textit{What coverage parameter gives us the best and the worst linear correlation? On which distribution do we get the best results?}
+
+\textit{Afterward, pick the coverage parameter that worked best and select two distributions by flipping their prior belief distributions. Report what prior distribution you used and report r. Do we see that r is affected? Does the model suffer in having worse linear correlation with respect to the observed data? Say in a few words why this is the case.}\\
+
+As it is visible in Table \ref{question_3}, the best linear correlation is given when the coverage parameter is -0.1 where on average $r = 0.85$. The worst correlation is given when coverage parameter is 0.1 where on average $r = 0.74$.
+
+Similarly, when comparing the results between the distribution, the best correlation is that of the Gaussian with an average $r = 0.93$. The worst correlation is given for the Left-skewed distribution where on average $r = 0.55$.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{rccc}
+  \hline
+ Model & $c = 0.1$ & $c = -0.1$ & $c = 0$ \\ 
+  \hline
+    Gaussian & 0.88 & 0.97 & 0.94\\ 
+    Left - skewed & 0.51 & 0.61 & 0.55\\ 
+    Moved & 0.84 & 0.97 & 0.93\\ 
+   \hline
+\end{tabular}
+\caption{Pearson's correlation between model's prediction and actual observation for 3 different model distributions where $\lambda = 40$ and coverage parameter is 0.1, -0.1 and 0.}
+\label{question_3}
+\end{table}
+
+For the second part of the question, we picked $c = -0.1$ as the best coverage parameter and selected to flip the distribution of the left-skewed and moved models. In particular, we used normal distribution with $mean = 6$ and $st.d = 2$ for the left-skewed model. The correlation we found was $r = 0.93$. For the moved model we used gamma distribution with $shape = 4$ and $scale = 1.5$. The correlation found was $r = 0.35$.
+
+A sum of the results in regards to the previously observed data is found on Table \ref{question_3_flipped}. In the case of the left-skewed model, the correlation improves a lot with a prior distribution set. In contrast, for the moved model, the correlation worsens. This decrease was expected since gamma distribution would not work well with data that are concentrated on the right side of distribution.
+% [TO-DO: explain why this happens even more?!]
+
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{rccr}
+  \hline
+ Model & Original r & r with prior distribution & Prior distribution\\ 
+  \hline
+    Left - skewed & 0.61 & 0.93 & Normal distribution\\ 
+    Moved & 0.97 & 0.35 & Gamma distribution\\ 
+   \hline
+\end{tabular}
+\caption{Pearson's correlation between 2 models with flipped distribution and $c = -0.1$}.
+\label{question_3_flipped}
+\end{table}
 
 \section{Question 4}
 \label{Q4}
