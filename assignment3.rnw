@@ -656,20 +656,20 @@ First, you have to specify likelihood. You should draw on the previous example. 
 Where $Model$ is our model from Section \ref{s1}. (In particular, you should make use of the function use.adjective in the new likelihood. Roughly, instead of adding up param1 and param2, you need to do something else.)
 
 <<echo=TRUE>>=
-#adjective.points <- c(1:14)
+adjective.points <- c(1:14)
 
-#lambda = function(x) {dunif(x, 1, 50)}
-#coverage.pararemeter = function(x) {dunif(x, -1, 1)}
+# lambda = function(x) {dunif(x, 1, 50)}
+# coverage.pararemeter = function(x) {dunif(x, -1, 1)}
 
-#densityModel = function(x){dnorm(x, , )}
-#cumulativeModel = function(x){dnorm(x, , )}
+densityModel = function(x){dnorm(x,180,10)}
+cumulativeModel = function(x){dnorm(x,180,10)}
   
 likelihood <- function(param1) {
 
     collect <- 0
     
     for (i in 1:14) {
-        #collect  <- collect + dnorm(data.gaus.big$percentage[i], mean= use.adjective(data.gaus.big$percentage[i], adjective.points, lambda, coverage.parameter, densityModel, cumulativeModel ), sd=0.1, log=TRUE)
+        collect  <- collect + dnorm(data.gaus.big$percentage[i], mean=use.adjective(i, adjective.points, param1[2], param1[1], densityModel, cumulativeModel), sd=0.1, log=TRUE)
 
     }
 
@@ -690,13 +690,16 @@ Now, you can run the model by uncommenting and using:
 
 <<echo=TRUE>>=
 
-#bayesianSetup <- createBayesianSetup(likelihood = likelihood, prior = prior)
+bayesianSetup <- createBayesianSetup(likelihood = likelihood, prior = prior)
 
-#iter = 10000
+iter = 10000
 
-#settings = list(iterations = iter, message = FALSE)
+settings = list(iterations = iter, message = FALSE)
 
-#out <- runMCMC(bayesianSetup = bayesianSetup, settings = settings)
+out <- runMCMC(bayesianSetup = bayesianSetup, settings = settings)
+
+summary(out)
+plot(out)
 
 @
 
