@@ -435,13 +435,15 @@ g2
 save_plot(g2 ,"figs/Question_2_waiting_time_sigma.png", width=444)
 @
 
-
-<<>>=
 \section{Data}
 
 We now apply the constructed model to data from an experiment reported in Solt \& Gotzner, Semantics and Linguistic Theory 22 (also in the zipped folder). In particular, we will look at experiment 1, section 3.1. The idea behind the experiment is that participants have to choose entities that they would classify using a given adjective. The grid of entities they are presented with represents the comparison class. The entities in this grid are distributed in various ways w.r.t. the property described by the adjective. 
 
-The experimental results are available in 'adjective-data.csv' (courtesy of the authors). For discussion of the experiment, you can also check Qing and Franke (who also replicate the experiment; their discussion is succint and clear).<<echo=TRUE>>=
+The experimental results are available in 'adjective-data.csv' (courtesy of the authors). For discussion of the experiment, you can also check Qing and Franke (who also replicate the experiment; their discussion is succint and clear).
+
+
+<<>>
+<<echo=TRUE>>=
 data.adjective <- read.csv(file="adjective-data.csv", header=TRUE)
 @
 
@@ -495,9 +497,44 @@ For the first check, let us consider predictions and observations with respect t
     \item lambda=40, coverage.parameter=0
 \end{itemize}
 
+
+<<>>=
+degree.points <- c(1:14)
+denf_gauss <- function(x) {dnorm(x, 6, 2)}
+cumf_gauss <-function(x) {pnorm(x, 6, 2)}
+
+denf_left <- function(x){dgamma(x, 4, 1.5)}
+cumf_left <- function(x){pgamma(x, 4, 1.5)} 
+
+denf_moved_exp <- function(x){dnorm(x, 9, 2)}
+cumf_moved_exp <- function(x){pnorm(x, 9, 2)}
+
+cor_gaus_1 <- round(cor(data.gaus$percentage[data.gaus$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, 0.1, denf_gauss, cumf_gauss)}), method="pearson"), 2)
+cor_gaus_2 <- round(cor(data.gaus$percentage[data.gaus$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, -0.1, denf_gauss, cumf_gauss)}), method="pearson"), 2)
+cor_gaus_3 <- round(cor(data.gaus$percentage[data.gaus$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, 0, denf_gauss, cumf_gauss)}), method="pearson"), 2)
+
+
+cor_left_1 <- round(cor(data.left$percentage[data.left$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, 0.1, denf_left, cumf_left)}), method="pearson"), 2)
+cor_left_2 <- round(cor(data.left$percentage[data.left$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, -0.1, denf_left, cumf_left)}), method="pearson"), 2)
+cor_left_3 <- round(cor(data.left$percentage[data.left$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, 0, denf_left, cumf_left)}), method="pearson"), 2)
+
+cor_moved_1 <- round(cor(data.moved$percentage[data.moved$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, 0.1, denf_moved_exp, cumf_moved_exp)}), method="pearson"), 2)
+cor_moved_2 <- round(cor(data.moved$percentage[data.moved$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, -0.1, denf_moved_exp, cumf_moved_exp)}), method="pearson"), 2)
+cor_moved_3 <- round(cor(data.moved$percentage[data.moved$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, 0, denf_moved_exp, cumf_moved_exp)}), method="pearson"), 2)
+
+@
+
+
 What coverage parameter gives us the best and the worst linear correlation? On which distribution do we get the best results?
 
 After you are done with answering this, investigate what the role of prior distribution is. You can check this by hand on a small sample. Pick the coverage parameter that worked best in the previous subquestion. Then, select two distributions (e.g., left skew and moved) but in the model, flip their prior belief distributions (so, for example, gamma distribution is used on `moved distribution' and normal distribution is used on `left skewed distribution'). Report what prior distribution you used and report $r$. Answer these questions: Do we see that $r$ is affected? Does the model suffer in having worse linear correlation with respect to the observed data? Say in a few words why this is the case.
+
+<<>>=
+cor_left_flipped <- round(cor(data.left$percentage[data.left$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, -0.1, denf_gauss, cumf_left)}), method="pearson"), 2)
+
+cor_moved_flipped <- round(cor(data.moved$percentage[data.moved$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, -0.1, denf_left, cumf_left)}), method="pearson"), 2)
+@
+
 
 \section{Bayesian modeling}
 
