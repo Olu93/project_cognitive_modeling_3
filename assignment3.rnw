@@ -541,7 +541,7 @@ cor_moved_flipped <- round(cor(data.moved$percentage[data.moved$Adjective == "bi
 Finally, we are ready to do Bayesian modeling on the dataset. We will use the package BayesianTools for this. First, you have to install the package. Uncomment and use:
 
 <<echo=TRUE>>=
-#install.packages("BayesianTools")
+install.packages("BayesianTools")
 @
 
 After that, you can load the package:
@@ -637,7 +637,7 @@ Trace plots show what values were sequentially sampled. Density plots show poste
 
 You will now implement the parameter estimation for our model using the data from data.gaus.big (that is, we check only one adjective and only one distribution of that adjective).
 
-I specify the prior distribution for you. The prior distribution for coverage.parameter is Uniform distribution Unif(-1,0) (that is, any value between -1 and 0 including -1 and 0 is equally likely, no other values are possible). The prior distribution for lambda is Unif(1, 50). This is how this is encoded:
+I specify the prior distribution for you. The prior distribution for coverage.parameter is Uniform distribution Unif(-1,1) (that is, any value between -1 and 1 including -1 and 1 is equally likely, no other values are possible). The prior distribution for lambda is Unif(1, 50). This is how this is encoded:
 
 <<echo=TRUE>>=
 prior <- createUniformPrior(lower=c(-1,1), upper=c(1,50), best=NULL)
@@ -656,12 +656,20 @@ First, you have to specify likelihood. You should draw on the previous example. 
 Where $Model$ is our model from Section \ref{s1}. (In particular, you should make use of the function use.adjective in the new likelihood. Roughly, instead of adding up param1 and param2, you need to do something else.)
 
 <<echo=TRUE>>=
+#adjective.points <- c(1:14)
+
+#lambda = function(x) {dunif(x, 1, 50)}
+#coverage.pararemeter = function(x) {dunif(x, -1, 1)}
+
+#densityModel = function(x){dnorm(x, , )}
+#cumulativeModel = function(x){dnorm(x, , )}
+  
 likelihood <- function(param1) {
 
     collect <- 0
     
     for (i in 1:14) {
-        collect  <- collect + dnorm(data.gaus.big$percentage[i], mean=..., sd=0.1, log=TRUE)
+        #collect  <- collect + dnorm(data.gaus.big$percentage[i], mean= use.adjective(data.gaus.big$percentage[i], adjective.points, lambda, coverage.parameter, densityModel, cumulativeModel ), sd=0.1, log=TRUE)
 
     }
 
