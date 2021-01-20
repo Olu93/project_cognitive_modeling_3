@@ -658,9 +658,6 @@ Where $Model$ is our model from Section \ref{s1}. (In particular, you should mak
 <<echo=TRUE>>=
 adjective.points <- c(1:14)
 
-# lambda = function(x) {dunif(x, 1, 50)}
-# coverage.pararemeter = function(x) {dunif(x, -1, 1)}
-
 densityModel = function(x){dnorm(x,180,10)}
 cumulativeModel = function(x){dnorm(x,180,10)}
   
@@ -689,7 +686,6 @@ set.seed(2020)
 Now, you can run the model by uncommenting and using:
 
 <<echo=TRUE>>=
-
 bayesianSetup <- createBayesianSetup(likelihood = likelihood, prior = prior)
 
 iter = 10000
@@ -697,7 +693,10 @@ iter = 10000
 settings = list(iterations = iter, message = FALSE)
 
 out <- runMCMC(bayesianSetup = bayesianSetup, settings = settings)
+@
 
+
+<<echo=TRUE>>=
 summary(out)
 plot(out)
 
@@ -712,6 +711,44 @@ Note: it might take a while to run the model but it should not take more than a 
 \textbf{Question 5 (group, 1 pt)} Expand your model to construct the posterior distribution of the two parameters using three adjectives (\textit{big}, \textit{pointy}, \textit{tall}) in all three distributions. Explore the distribution of the parameters in out. Plot the summary and report summary statistics on lambda and coverage.parameter.
 
 Note: it might take a while to run the model but it should not take more than a few minutes. See also comments in Question 4.
+
+
+<<>>=
+all.adjectives <- subset(data.adjective, Adjective != "dark" & Distribution != "right")
+@
+
+
+<<>>=
+adjective.points <- c(1:14)
+  
+likelihood <- function(param1) {
+
+    collect <- 0
+    
+    for (i in 1:14) {
+        collect  <- collect + dnorm(all.adjectives$percentage[i], mean=use.adjective(i, adjective.points, param1[2], param1[1], densityModel, cumulativeModel), sd=0.1, log=TRUE)
+
+    }
+
+    return(collect)
+}
+@
+
+
+<<>>=
+set.seed(2020)
+bayesianSetup <- createBayesianSetup(likelihood = likelihood, prior = prior)
+
+iter = 10000
+
+settings = list(iterations = iter, message = FALSE)
+
+out <- runMCMC(bayesianSetup = bayesianSetup, settings = settings)
+
+summary(out)
+plot(out)
+@
+
 
 \textbf{Bonus question (group, 1 pt)} We specified the likelihood using dnorm with sd=0.1. Is this sensible or not? Check what dnorm is and state what problems there might be with this particular function and with sd=0.1 for our data. Is there an alternative probability distribution that would make more sense? Do not worry if you cannot answer this question - it is a bonus point and requires good conceptual understanding of the Bayesian model and how it links to behavioral data.
 
