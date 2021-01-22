@@ -228,6 +228,11 @@ use.adjective <- function(degree, scale.points, lambda, coverage.parameter, dens
     sum(sapply(scale.points[scale.points<=degree], function(threshold) {probability.threshold(threshold, scale.points, lambda, coverage.parameter, densityf, cumulativef)}))
 }
 
+# DISCUSS: The communicative efficiency of using q as a conventional standard of comparison for a comparison class, is then defined as the speaker’s expected chance of success in making the listener believe in the actual degree dA(x) of an individual x randomly chosen from that comparison class. For example, to measure how efficient a standard theta of “tall” is for describing basketball players, we calculate on average how likely the speaker will manage to convey the height of a random basketball player by adopting that standard.
+
+# E.g., if theta = 2.2m, the listener would have a good sense of the true height of a basketball player when he is described as “tall.” However, the positive form will seldom be applicable, since few individuals will have degrees that exceed the threshold. Thus such a theta is on average inefficient.  
+# E.g., if theta = 1.8m, then a basketball player being described as “tall” would tell very little about his actual height, which is inefficient as well.
+
 @
 
 After you implement the functions, you can address the following question:
@@ -394,6 +399,7 @@ example.waiting_time$y <- sapply(example.waiting_time$x, function(x) {dnorm(x, m
 
 densityf=function(x) {dgamma(x, 2, 1)}
 cumulativef=function(x) {pgamma(x, 2, 1)} 
+# If you know the mean is μ and the standard deviation is σ, then the shape parameter of a Gamma distribution is μ²/σ² and the scale parameter is σ²/μ
 
 example.waiting_time$es = sapply(time.points, function(threshold) {expected.success(threshold, time.points, densityf, cumulativef )})
 
@@ -499,29 +505,45 @@ For the first check, let us consider predictions and observations with respect t
 
 
 <<>>=
+use.adjective <- function(degree, time.points, lambda, coverage.parameter, densityf, cumulativef, threshold_func) {
+    denom = sum(sapply(time.points, function(t) {exp(lambda*utility(t, time.points, coverage.parameter, densityf, cumulativef))}))
+    print(denom)
+    tf = function(threshold, time.points, lambda, coverage.parameter, densityf, cumulativef){
+            exp(lambda*utility(threshold, time.points, coverage.parameter, densityf, cumulativef))/denom
+    }
+    sum(sapply(time.points[time.points<=degree], function(threshold) {tf(threshold, time.points, lambda, coverage.parameter, densityf, cumulativef)}))
+}
+
 degree.points <- c(1:14)
 denf_gauss <- function(x) {dnorm(x, 6, 2)}
 cumf_gauss <-function(x) {pnorm(x, 6, 2)}
+# threshold_func_gauss <- probability.threshold_constructor(threshold, time.points, 50, 0, denf_gauss, cumf_gauss)
 
 denf_left <- function(x){dgamma(x, 4, 1.5)}
 cumf_left <- function(x){pgamma(x, 4, 1.5)} 
+# threshold_func_left <- probability.threshold_constructor(threshold, time.points, 50, 0, denf_left, cumf_left)
 
 denf_moved_exp <- function(x){dnorm(x, 9, 2)}
 cumf_moved_exp <- function(x){pnorm(x, 9, 2)}
+# threshold_func_moved <- probability.threshold_constructor(threshold, time.points, 50, 0, denf_moved_exp, cumf_moved_exp)
 
 cor_gaus_1 <- round(cor(data.gaus$percentage[data.gaus$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, 0.1, denf_gauss, cumf_gauss)}), method="pearson"), 2)
 cor_gaus_2 <- round(cor(data.gaus$percentage[data.gaus$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, -0.1, denf_gauss, cumf_gauss)}), method="pearson"), 2)
 cor_gaus_3 <- round(cor(data.gaus$percentage[data.gaus$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, 0, denf_gauss, cumf_gauss)}), method="pearson"), 2)
 
 
-cor_left_1 <- round(cor(data.left$percentage[data.left$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, 0.1, denf_left, cumf_left)}), method="pearson"), 2)
-cor_left_2 <- round(cor(data.left$percentage[data.left$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, -0.1, denf_left, cumf_left)}), method="pearson"), 2)
-cor_left_3 <- round(cor(data.left$percentage[data.left$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, 0, denf_left, cumf_left)}), method="pearson"), 2)
+cor_left_1 <- round(cor(data.left$percentage[data.left$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, 0.1, denf_left, cumf_left, threshold_func_left)}), method="pearson"), 2)
+check_1 = data.left$percentage[data.left$Adjective == "big"]
+check_2 = sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, 0.1, denf_left, cumf_left, threshold_func_left)})
+
+cor_left_2 <- round(cor(data.left$percentage[data.left$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, -0.1, denf_left, cumf_left, threshold_func_left)}), method="pearson"), 2)
+cor_left_3 <- round(cor(data.left$percentage[data.left$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, 0, denf_left, cumf_left, threshold_func_left)}), method="pearson"), 2)
 
 cor_moved_1 <- round(cor(data.moved$percentage[data.moved$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, 0.1, denf_moved_exp, cumf_moved_exp)}), method="pearson"), 2)
 cor_moved_2 <- round(cor(data.moved$percentage[data.moved$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, -0.1, denf_moved_exp, cumf_moved_exp)}), method="pearson"), 2)
 cor_moved_3 <- round(cor(data.moved$percentage[data.moved$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, 0, denf_moved_exp, cumf_moved_exp)}), method="pearson"), 2)
 
+# DISCUSS: Given that the data distribution was generated under a different distribution, it makes sense that a differing prior distribution will be biased towards that prior distribution. Hence, the model will have difficulties adjusting to the data, while keeping the prior in mind. 
 @
 
 
@@ -714,30 +736,34 @@ Note: it might take a while to run the model but it should not take more than a 
 
 
 <<>>=
-all.adjectives <- subset(data.adjective, Adjective != "dark" & Distribution != "right")
-@
-
-
-<<>>=
 adjective.points <- c(1:14)
-  
-likelihood <- function(param1) {
+data_gaus = subset(data.gaus, Adjective != "dark")
+data_left = subset(data.left, Adjective != "dark")
+data_moved = subset(data.moved, Adjective != "dark")
+
+likelihood_q5 <- function(param1) {
 
     collect <- 0
     
-    for (i in 1:14) {
-        collect  <- collect + dnorm(all.adjectives$percentage[i], mean=use.adjective(i, adjective.points, param1[2], param1[1], densityModel, cumulativeModel), sd=0.1, log=TRUE)
+    for (i in 1:42) {
+        collect  <- collect + dnorm(data_gaus$percentage[i], mean=use.adjective(i, adjective.points, param1[2], param1[1], denf_gauss, cumf_gauss), sd=0.1, log=TRUE)
+
+    }
+    for (i in 1:42) {
+        collect  <- collect + dnorm(data_left$percentage[i], mean=use.adjective(i, adjective.points, param1[2], param1[1], denf_left,cumf_left), sd=0.1, log=TRUE)
+
+    }
+    for (i in 1:42) {
+        collect  <- collect + dnorm(data_moved$percentage[i], mean=use.adjective(i, adjective.points, param1[2], param1[1], denf_moved_exp, cumf_moved_exp), sd=0.1, log=TRUE)
 
     }
 
     return(collect)
+    
 }
-@
 
-
-<<>>=
 set.seed(2020)
-bayesianSetup <- createBayesianSetup(likelihood = likelihood, prior = prior)
+bayesianSetup <- createBayesianSetup(likelihood = likelihood_q5, prior = prior)
 
 iter = 10000
 
@@ -748,6 +774,8 @@ out <- runMCMC(bayesianSetup = bayesianSetup, settings = settings)
 summary(out)
 plot(out)
 @
+
+
 
 
 \textbf{Bonus question (group, 1 pt)} We specified the likelihood using dnorm with sd=0.1. Is this sensible or not? Check what dnorm is and state what problems there might be with this particular function and with sd=0.1 for our data. Is there an alternative probability distribution that would make more sense? Do not worry if you cannot answer this question - it is a bonus point and requires good conceptual understanding of the Bayesian model and how it links to behavioral data.
