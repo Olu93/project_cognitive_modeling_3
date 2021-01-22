@@ -290,7 +290,7 @@ max_degree_sigma <- max(example.height$sigma_probs)
 <<>>=
 g1 <- ggplot(example.height, aes(x=x, y=y)) 
 g1 <- g1 + geom_area(aes(y=threshold_probs),fill="red", alpha=.4) 
-g1 <- g1 + xlab("Threshold (cm)") + ylab("P") + theme_gray(20) 
+g1 <- g1 + xlab("Threshold (cm)") + ylab("Utility") + theme_gray(20) 
 g1
 
 save_plot(g1 ,"figs/Question_1_threshold.png", width=444)
@@ -439,6 +439,12 @@ g2
 
 save_plot(g2 ,"figs/Question_2_waiting_time_sigma.png", width=444)
 @
+
+<<>>=
+max_degree_waiting_es <- max(example.waiting_time$es)
+max_degree_waiting_sigma <- max(example.waiting_time$sigma_probs)
+@
+
 
 \section{Data}
 
