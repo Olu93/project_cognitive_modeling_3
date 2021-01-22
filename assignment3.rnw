@@ -223,7 +223,6 @@ probability.threshold <- function(threshold, scale.points, lambda, coverage.para
     
 }
 
-
 use.adjective <- function(degree, scale.points, lambda, coverage.parameter, densityf, cumulativef) {
     sum(sapply(scale.points[scale.points<=degree], function(threshold) {probability.threshold(threshold, scale.points, lambda, coverage.parameter, densityf, cumulativef)}))
 }
@@ -507,20 +506,22 @@ For the first check, let us consider predictions and observations with respect t
 <<>>=
 use.adjective <- function(degree, time.points, lambda, coverage.parameter, densityf, cumulativef, threshold_func) {
     denom = sum(sapply(time.points, function(t) {exp(lambda*utility(t, time.points, coverage.parameter, densityf, cumulativef))}))
-    print(denom)
+    # print(denom)
     tf = function(threshold, time.points, lambda, coverage.parameter, densityf, cumulativef){
             exp(lambda*utility(threshold, time.points, coverage.parameter, densityf, cumulativef))/denom
     }
     sum(sapply(time.points[time.points<=degree], function(threshold) {tf(threshold, time.points, lambda, coverage.parameter, densityf, cumulativef)}))
 }
 
+
+
 degree.points <- c(1:14)
 denf_gauss <- function(x) {dnorm(x, 6, 2)}
 cumf_gauss <-function(x) {pnorm(x, 6, 2)}
 # threshold_func_gauss <- probability.threshold_constructor(threshold, time.points, 50, 0, denf_gauss, cumf_gauss)
 
-denf_left <- function(x){dgamma(x, 4, 1.5)}
-cumf_left <- function(x){pgamma(x, 4, 1.5)} 
+denf_left <- function(x){dgamma(x, 4, 1/1.5)}
+cumf_left <- function(x){pgamma(x, 4, 1/1.5)} 
 # threshold_func_left <- probability.threshold_constructor(threshold, time.points, 50, 0, denf_left, cumf_left)
 
 denf_moved_exp <- function(x){dnorm(x, 9, 2)}
@@ -530,14 +531,13 @@ cumf_moved_exp <- function(x){pnorm(x, 9, 2)}
 cor_gaus_1 <- round(cor(data.gaus$percentage[data.gaus$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, 0.1, denf_gauss, cumf_gauss)}), method="pearson"), 2)
 cor_gaus_2 <- round(cor(data.gaus$percentage[data.gaus$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, -0.1, denf_gauss, cumf_gauss)}), method="pearson"), 2)
 cor_gaus_3 <- round(cor(data.gaus$percentage[data.gaus$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, 0, denf_gauss, cumf_gauss)}), method="pearson"), 2)
+cor_left_1 <- round(cor(data.left$percentage[data.left$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, 0.1, denf_left, cumf_left)}), method="pearson"), 2)
 
+# check_1 = data.left$percentage[data.left$Adjective == "big"]
+# check_2 = sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, 0.1, denf_left, cumf_left, threshold_func_left)})
 
-cor_left_1 <- round(cor(data.left$percentage[data.left$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, 0.1, denf_left, cumf_left, threshold_func_left)}), method="pearson"), 2)
-check_1 = data.left$percentage[data.left$Adjective == "big"]
-check_2 = sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, 0.1, denf_left, cumf_left, threshold_func_left)})
-
-cor_left_2 <- round(cor(data.left$percentage[data.left$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, -0.1, denf_left, cumf_left, threshold_func_left)}), method="pearson"), 2)
-cor_left_3 <- round(cor(data.left$percentage[data.left$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, 0, denf_left, cumf_left, threshold_func_left)}), method="pearson"), 2)
+cor_left_2 <- round(cor(data.left$percentage[data.left$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, -0.1, denf_left, cumf_left)}), method="pearson"), 2)
+cor_left_3 <- round(cor(data.left$percentage[data.left$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, 0, denf_left, cumf_left)}), method="pearson"), 2)
 
 cor_moved_1 <- round(cor(data.moved$percentage[data.moved$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, 0.1, denf_moved_exp, cumf_moved_exp)}), method="pearson"), 2)
 cor_moved_2 <- round(cor(data.moved$percentage[data.moved$Adjective == "big"], sapply(degree.points, function(x) {use.adjective(x, degree.points, 40, -0.1, denf_moved_exp, cumf_moved_exp)}), method="pearson"), 2)
@@ -545,6 +545,8 @@ cor_moved_3 <- round(cor(data.moved$percentage[data.moved$Adjective == "big"], s
 
 # DISCUSS: Given that the data distribution was generated under a different distribution, it makes sense that a differing prior distribution will be biased towards that prior distribution. Hence, the model will have difficulties adjusting to the data, while keeping the prior in mind. 
 @
+
+
 
 
 What coverage parameter gives us the best and the worst linear correlation? On which distribution do we get the best results?
@@ -745,15 +747,15 @@ likelihood_q5 <- function(param1) {
 
     collect <- 0
     
-    for (i in 1:42) {
+    for (i in adjective.points) {
         collect  <- collect + dnorm(data_gaus$percentage[i], mean=use.adjective(i, adjective.points, param1[2], param1[1], denf_gauss, cumf_gauss), sd=0.1, log=TRUE)
 
     }
-    for (i in 1:42) {
+    for (i in adjective.points) {
         collect  <- collect + dnorm(data_left$percentage[i], mean=use.adjective(i, adjective.points, param1[2], param1[1], denf_left,cumf_left), sd=0.1, log=TRUE)
 
     }
-    for (i in 1:42) {
+    for (i in adjective.points) {
         collect  <- collect + dnorm(data_moved$percentage[i], mean=use.adjective(i, adjective.points, param1[2], param1[1], denf_moved_exp, cumf_moved_exp), sd=0.1, log=TRUE)
 
     }
