@@ -658,8 +658,8 @@ Where $Model$ is our model from Section \ref{s1}. (In particular, you should mak
 <<echo=TRUE>>=
 adjective.points <- c(1:14)
 
-densityModel = function(x){dnorm(x,180,10)}
-cumulativeModel = function(x){dnorm(x,180,10)}
+densityModel = function(x){dnorm(x,6,2)}
+cumulativeModel = function(x){pnorm(x,6,2)}
   
 likelihood <- function(param1) {
 
