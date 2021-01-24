@@ -58,7 +58,7 @@ In Figure \ref{fig:q1_threshold}, the \textbf{probability} of using threshold on
 \begin{figure}[H]
     \centering
     \includegraphics[width=100mm]{figs/Question_1_threshold.png}
-    \caption{The graph shows the utility of threshold U on a scale of 1-250 cm.}
+    \caption{The graph shows the probability of threshold use on a scale of 1-250 cm.}
   \label{fig:q1_threshold}
 \end{figure}
 
@@ -71,7 +71,7 @@ Similarly, in Figure \ref{fig:q1_sigma}, it is shown the graph of the function $
   \label{fig:q1_sigma}
 \end{figure}
 
-Comparing the two degree points to evaluate the communication efficiency, it is evident that the two values deviate. Considering that $\theta = 255$ is optimal, the speaker is most likely to use the adjective "tall" for heights greater than 184 cm when $\theta = 0.083$. For lower values of $\theta$, someone described as "tall" does not indicate a lot about the actual height , making it inefficient to use the adjective.
+Comparing the two degree points to evaluate the communication efficiency, it is evident that the two values deviate. Considering that $\theta = 250$ is not efficient because it does not apply to a large population of people, the speaker is most likely to use 184 cm as threshold. For other values of $\theta$, someone described as "tall" would probably make it inefficient to use.
 
 \section{Question 2}
 \label{Q2}
@@ -87,7 +87,7 @@ For specifying the IQ distribution, we use $IQ \sim \mathcal{N}(100, 15)$ since 
   \label{fig:q2_iq_es}
 \end{figure}
 
-The highest degree in Figure \ref{fig:q2_iq_es} is when $ES = 0.029$ for $IQ = 106$.
+The highest expected success $ES = 0.029$ in Figure \ref{fig:q2_iq_es} is at $IQ = 106$.
 
 
 \begin{figure}[H]
@@ -97,13 +97,13 @@ The highest degree in Figure \ref{fig:q2_iq_es} is when $ES = 0.029$ for $IQ = 1
   \label{fig:q2_iq_sigma}
 \end{figure}
 
-The highest degree in Figure \ref{fig:q2_iq_sigma} is when $ES = 1$ for $IQ = 150$.
+The highest likelihood of adjective use $\sigma(A|d; \lambda; c) = 1$ in Figure \ref{fig:q2_iq_sigma} is at $IQ = 150$.
 
 
 \subsection{Waiting times - gamma distribution}
 \textit{Specify the gamma distribution and generate figures for $ES$ and $\sigma$. Report which degree has the highest $ES$.}\\
 
-For specifying the waiting times distribution, we use Waiting times $\sim \mathcal{\gamma}(2, 1)$. 
+For specifying the waiting times distribution, we use Waiting times $\sim \mathcal{\gamma}(2, 1)$. These values were estimated by using $\frac{\mu^2}{\sigma^2}$ and $\frac{\sigma^2}{\mu}$ for the shape and scale parameters, respectively. 
 %[TO-DO: explain more why these values]
 
 \begin{figure}[H]
@@ -112,7 +112,8 @@ For specifying the waiting times distribution, we use Waiting times $\sim \mathc
     \caption{The graph shows the $\sigma$ function for waiting on a scale of 1-30.}
   \label{fig:q2_waiting_es}
 \end{figure}
-The highest degree in Figure \ref{fig:q2_waiting_es} is when $ES = 0.387$ for waiting time $= 2$ minutes.
+
+The highest expected success $ES = 0.387$ in Figure \ref{fig:q2_waiting_es} is at waiting time $= 2$ minutes.
 
 
 \begin{figure}[H]
@@ -121,7 +122,7 @@ The highest degree in Figure \ref{fig:q2_waiting_es} is when $ES = 0.387$ for wa
     \caption{The graph shows the $\sigma$ function for waiting on a scale of 1-30.}
   \label{fig:q2_waiting_sigma}
 \end{figure}
-The highest degree in Figure \ref{fig:q2_waiting_sigma} is when $ES = 1$ for waiting time $= 30$ minutes.
+The highest likelihood of adjective use $\sigma(A|d; \lambda; c) = 1$ in Figure \ref{fig:q2_waiting_sigma} is at waiting time $= 30$ minutes.
 
 
 \section{Question 3}
