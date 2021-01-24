@@ -290,7 +290,7 @@ max_degree_sigma <- max(example.height$sigma_probs)
 <<>>=
 g1 <- ggplot(example.height, aes(x=x, y=y)) 
 g1 <- g1 + geom_area(aes(y=threshold_probs),fill="red", alpha=.4) 
-g1 <- g1 + xlab("Threshold (cm)") + ylab("Probability of threshold use") + theme_gray(20) 
+g1 <- g1 + xlab("Threshold (cm)") + ylab("Probability of Threshold Use") + theme_gray(20) 
 g1
 
 save_plot(g1 ,"figs/Question_1_threshold.png", width=444)
@@ -367,7 +367,7 @@ max_degree_iq_sigma <- max(example.iq$sigma_probs)
 <<>>=
 g1 <- ggplot(example.iq, aes(x=x, y=y)) 
 g1 <- g1 + geom_area(aes(y=es),fill="red", alpha=.4) 
-g1 <- g1 + xlab("IQ") + ylab("Expected success") + theme_gray(20) 
+g1 <- g1 + xlab("IQ") + ylab("Expected Success") + theme_gray(20) 
 g1
 
 save_plot(g1 ,"figs/Question_2_IQ_es.png", width=444)
