@@ -109,7 +109,7 @@ For specifying the waiting times distribution, we use Waiting times $\sim \mathc
 \begin{figure}[H]
     \centering
     \includegraphics[width=100mm]{figs/Question_2_waiting_time_es.png}
-    \caption{The graph shows the $\sigma$ function for waiting on a scale of 1-30.}
+    \caption{The graph shows the Expected Success function for waiting on a scale of 1-30.}
   \label{fig:q2_waiting_es}
 \end{figure}
 
@@ -139,9 +139,9 @@ The highest likelihood of adjective use $\sigma(A|d; \lambda; c) = 1$ in Figure 
 
 \textit{Afterward, pick the coverage parameter that worked best and select two distributions by flipping their prior belief distributions. Report what prior distribution you used and report r. Do we see that r is affected? Does the model suffer in having worse linear correlation with respect to the observed data? Say in a few words why this is the case.}\\
 
-As it is visible in Table \ref{question_3}, the best linear correlation is given when the coverage parameter is -0.1 where on average $r = 0.97$. The worst correlation is given when coverage parameter is 0.1 where on average $r = 0.86$.
+As it is visible in Table \ref{question_3}, the best linear correlation is given when the coverage parameter is -0.1 in which the r value is on average $r = 0.97$. The worst correlation is given when coverage parameter is 0.1 in which the average correlation values is $r = 0.86$.
 
-Similarly, when comparing the results between the distribution, the best correlation is that of the Left-skewed with an average $r = 0.94$. The worst correlation is given for the Moved distribution where on average $r = 0.91$.
+Similarly, when comparing the results between the distribution, the best correlation is that of the Left-skewed with an average of $r = 0.94$. The worst correlation is given for the Moved distribution in which the on average correlation is $r = 0.91$.
 
 \begin{table}[ht]
 \centering
@@ -160,8 +160,8 @@ Similarly, when comparing the results between the distribution, the best correla
 
 For the second part of the question, we picked $c = -0.1$ as the best coverage parameter and selected to flip the distribution of the left-skewed and moved models. In particular, we used $\mathcal{N}(6, 2)$ for the left-skewed model. The correlation we found was $r = 0.95$. For the moved model we used $\mathcal{\gamma}(4, 1.5)$. The correlation found was $r = 0.86$.
 
-A sum of the results in regards to the previously observed data is found on Table \ref{question_3_flipped}. In the case of the left-skewed model, the correlation worsens slightly with a prior distribution set. This decrease was expected since gamma distribution would not work well with data that are concentrated on the right side of distribution. In contrast, for the moved model, the correlation improves a lot. 
-% [TO-DO: explain why this happens even more?!]
+A sum of the results in regards to the previously observed data is found on  \autoref{question_3_flipped}. In the case of the left-skewed model, the correlation worsens slightly with a Gaussian prior distribution set. This decrease was expected since Gaussian distribution would not work well with data that are concentrated on the right side of the distribution. Given that the data distribution was generated under a different distribution, it makes sense that a differing prior distribution will be biased towards that prior distribution. Hence, the model will have difficulties adjusting to the data, while keeping the prior in mind. Similar holds for the moved distribution as it's underlying prior is Gaussian and a Gamma distribution would not fit well.
+
 
 \begin{table}[ht]
 \centering
@@ -181,9 +181,8 @@ A sum of the results in regards to the previously observed data is found on Tabl
 \label{Question 4}
 \textit{Bayesian model - What values have been found for lambda and coverage.parameter? Report summary statistics on lambda and coverage.parameter (MAP, median, 2.5\% to 97.5\%). Discuss briefly the summaries.}\\
 
-For the Bayesian model, we used as a prior $\mathcal{N}(6, 2)$. As seen in Table \ref{question_4},  the values of 2.5\% and 97.5\% interval indicate the limits of c and $\lambda$. Hence, there is a 95\% chance that $ c \in [-0.332, -0.107]$ and $\lambda \in [18.483, 48.985]$. The MAP values are $c = -0.197$ and $\lambda = 33.364$. These values are very close to the ones we used in \autref{Question 3} ($\lambda = 40$, $c = -0.1$). The correlation there had the highest value for a Gaussian distribution, which is used here as a prior.
+For the Bayesian model, we used as a prior $\mathcal{N}(6, 2)$. As seen in \autoref{question_4},  the values of 2.5\% and 97.5\% interval indicate the limits of c and $\lambda$. Hence, there is a 95\% chance that $ c \in [-0.332, -0.107]$ and $\lambda \in [18.483, 48.985]$. The MAP values are $c = -0.197$ and $\lambda = 33.364$. These values are very close to the ones we found in \autref{Question 3} ($\lambda = 40$, $c = -0.1$) for the highest correlation value given a Gaussian distribution. These estimates are reasonable in the context of the experiment as a negative coverage parameter hints that the gradable adjective is not generally applicable \cite{qing_MeaningUseGradable_2014}. Intuitively, this holds for an adjective like 'big'.
 
-%[TO-DO: should we also say, that because the values are close the ones from the previous question, it means that the Bayesian model will have good results ?! sth like that ]
 
 \begin{table}[ht]
 \centering
@@ -202,9 +201,9 @@ For the Bayesian model, we used as a prior $\mathcal{N}(6, 2)$. As seen in Table
 
 \section{Question 5}
 \label{Q5}
-\textit{Expand your model to construct the posterior distribution of the two parameters using three adjectives (big, pointy, tall) in all three distributions. Explore the distribution of the parameters in out. Plot the summary and report summary statistics on lambda and coverage.parameter.}\\
+\textit{Expand your model to construct the posterior distribution of the two parameters using three adjectives (big, pointy, tall) in all three distributions. Explore the distribution of the parameters in \emph{out}. Plot the summary and report summary statistics on lambda and coverage.parameter.}\\
 
-Similar to \autref{Question 4}, we used as a prior $\mathcal{N}(6, 2)$ for all three adjectives 'big','pointy' and 'tall'. Again, there is a 95\% chance that $ c \in [-0.080, -0.028]$ and $\lambda \in [23.653, 47.599]$. The MAP values are $c = -0.051$ and $\lambda = 32.840$ which are further away from $c = -0.01$ and $\lambda = 40$. In addition, these values are worse than previously, which is expected since we extended the model in order to make predictions for 3 adjectives that are different.
+Similar to \autref{Question 4}, we used as a prior $\mathcal{N}(6, 2)$ for all three adjectives 'big','pointy' and 'tall'. Again, there is a 95\% chance that $ c \in [-0.045, -0.016]$ and $\lambda \in [25.764, 39.160]$. The MAP values are $c = -0.031$ and $\lambda = 30.788$ which are further away from $c = -0.01$ and $\lambda = 40$. The increased deviation is reasonable as we now expand the model to include three adjectives. Beforehand, the model only focused on the adjective "big". 
 
 \begin{table}[ht]
 \centering
@@ -212,8 +211,8 @@ Similar to \autref{Question 4}, we used as a prior $\mathcal{N}(6, 2)$ for all t
   \hline
   & MAP & median & 2.5\% interval & 97.5\% interval\\ 
   \hline
-    c & -0.051 & -0.052 & -0.080 & -0.028\\ 
-    $\lambda$ & 32.840 & 34.614 & 23.653 & 47.599\\ 
+    c & -0.031 & -0.031 & -0.045  & -0.016\\ 
+    $\lambda$ & 30.788 & 31.269 & 25.764  & 39.160\\ 
    \hline
 \end{tabular}
 \caption{A statistics summary of c and $\lambda$ for adjectives = 'big', 'pointy', 'tall' for 3 distributions.}
@@ -224,13 +223,22 @@ Similar to \autref{Question 4}, we used as a prior $\mathcal{N}(6, 2)$ for all t
 \label{bonus}
 \textit{We specified the likelihood using dnorm with $sd=0.1$. Is this sensible or not? Check what dnorm is and state what problems there might be with this particular function and with $sd=0.1$ for our data. Is there an alternative probability distribution that would make more sense?}\\
 
-Standard deviation shows how much variation or "dispersion" there is from the mean. A low value of st.d. as here, indicate that the data points tend to be close to the mean. By keeping the data points concentrated to the mean, we ensure that the likehood's values will not be widespread. 
+The dnorm function returns a probability/density for a given value, a mean and a st.d. In our case the mean is determined by a data point in the experimental data set. Hence, the simulation collects the sum of each degrees percentage value for an adjective given their likelihood under their respective likelihood of adjective use.
+
+The standard deviation determines how much samples "disperse" from the mean. A low value of st.d. as here, indicate that the data points tend to be close to the mean. A low value like 0.1 seems reasonable as the likelihoods of adjective use will remain within the bounds of the 0 and 1. Increasing the standard deviation increases the range of "highly" probable deviations. Reducing the st.d might not capture the unexplained variations within the data, that are necessary for a "faithful" simulation. Determining the correct standard distribution is therefore difficult.  
+
+%However, 99\% of a normal distribution lie within 3 standard deviations from the mean. Meaning, that the data generated will only remain within valid bounds (0 to 1) if the means are within the range of .3 and .7. However, for means that exceed this range the simulation may often produce invalid values which are detrimental for the simulation. Choosing a smaller st.d may mitigate this issue slightly but it is not possible to overcome it. Furthermore, choosing the st.d to be too small, risks overfitting the basis data by producing simulated values that are to close to the initial data. 
+
+As a result, choosing the normal distribution may not be the best approach to model the simulation. With most of the true data being left-skewed it makes more sense to model the generated data as random samples from a left-skewed distribution. This is further supported by the results from \autref{Question 3} which showed that the left-skewed gamma-prior produced results which correlated the most with the true data.
+Moreover, in a left-skewed distribution, small data values are gathered on the left, whereas higher values are gathered to the right. This pattern also emerges from the likelihood of the adjective use. We can model the simulation in a similar way by 
+
+% By keeping the data points concentrated to the mean, we ensure that the likehood's values will not be widespread. 
 
 %the accuracy of someone using an adjective ?!
 
-A left-skewed distribution might be better to use. Firstly because we tested the distributions on the previous question and proved that left-skewed had a better correlation value.
 
-Second, because we want to ensure the communication efficiency. In a left-skewed distribution, small data values are gathered on the left, whereas higher values are gathered to the right. Communication efficiency increases as the values of likelihood increase. Since we want a concentration of values on the ride side to increase communication efficiency, a left skewed distribution might be a better choice.
+
+Second, because we want to ensure the communication efficiency.  Communication efficiency increases as the values of likelihood increase. Since we want a concentration of values on the ride side to increase communication efficiency, a left skewed distribution might be a better choice.
 
 \clearpage 
 \printbibliography
